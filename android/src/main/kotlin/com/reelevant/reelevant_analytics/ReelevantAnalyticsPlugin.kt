@@ -7,6 +7,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.util.*
 
 /** ReelevantAnalyticsPlugin */
 class ReelevantAnalyticsPlugin: FlutterPlugin, MethodCallHandler {
@@ -22,10 +23,10 @@ class ReelevantAnalyticsPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else if (call.method == "getUserAgent") {
+    if (call.method == "getUserAgent") {
       result.success(System.getProperty("http.agent"))
+    } else if (call.method == "getDeviceId") {
+      result.success(UUID.randomUUID().toString())
     } else {
       result.notImplemented()
     }

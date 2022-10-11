@@ -15,6 +15,8 @@ public class SwiftReelevantAnalyticsPlugin: NSObject, FlutterPlugin {
         result("iOS " + UIDevice.current.systemVersion)
       case "getUserAgent":
         result(WKWebView().value(forKey: "userAgent") as? String ?? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36")
+      case "getDeviceId":
+        result(UIDevice.current.identifierForVendor?.uuidString)
       default:
         result(FlutterMethodNotImplemented)
     }

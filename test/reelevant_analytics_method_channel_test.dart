@@ -10,7 +10,14 @@ void main() {
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      switch (methodCall.method) {
+        case 'getUserAgent':
+          return 'foo agent';
+        case 'getDeviceId':
+          return '42';
+        default:
+          return null;
+      }
     });
   });
 
@@ -18,7 +25,11 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('getUserAgent', () async {
+    expect(await platform.getUserAgent(), 'foo agent');
+  });
+
+  test('getDeviceId', () async {
+    expect(await platform.getUserAgent(), '42');
   });
 }

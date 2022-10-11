@@ -8,9 +8,9 @@ class MockReelevantAnalyticsPlatform
     with MockPlatformInterfaceMixin
     implements ReelevantAnalyticsPlatform {
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<String?> getUserAgent() => Future.value('foo agent');
   @override
-  Future<String?> getUserAgent() => Future.value('ios');
+  Future<String?> getDeviceId() => Future.value('42');
 }
 
 void main() {
@@ -21,13 +21,11 @@ void main() {
     expect(initialPlatform, isInstanceOf<MethodChannelReelevantAnalytics>());
   });
 
-  test('getPlatformVersion', () async {
+  test('getUserAgent', () async {
     ReelevantAnalytics reelevantAnalyticsPlugin =
         ReelevantAnalytics(companyId: 'foo', datasourceId: 'bar');
     MockReelevantAnalyticsPlatform fakePlatform =
         MockReelevantAnalyticsPlatform();
     ReelevantAnalyticsPlatform.instance = fakePlatform;
-
-    expect(await reelevantAnalyticsPlugin.getPlatformVersion(), '42');
   });
 }

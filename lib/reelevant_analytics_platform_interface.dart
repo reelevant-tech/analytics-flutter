@@ -24,11 +24,11 @@ abstract class ReelevantAnalyticsPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
-
   Future<String?> getUserAgent() {
     throw UnimplementedError('getUserAgent() has not been implemented.');
+  }
+
+  Future<String?> getDeviceId() {
+    throw UnimplementedError('getDeviceId() has not been implemented.');
   }
 }

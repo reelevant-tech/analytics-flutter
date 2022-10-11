@@ -68,21 +68,14 @@ class ReelevantAnalytics {
     () async {
       var prefs = await SharedPreferences.getInstance();
       if (prefs.getString('tmpId') == null) {
-        prefs.setString('tmpId', randomIdentifier());
+        var deviceId = await ReelevantAnalyticsPlatform.instance.getDeviceId();
+        prefs.setString('tmpId', deviceId ?? randomIdentifier());
       }
     }();
     // Set user agent
     () async {
-      userAgent = await getUserAgent();
+      userAgent = await ReelevantAnalyticsPlatform.instance.getUserAgent();
     }();
-  }
-
-  Future<String?> getPlatformVersion() {
-    return ReelevantAnalyticsPlatform.instance.getPlatformVersion();
-  }
-
-  Future<String?> getUserAgent() {
-    return ReelevantAnalyticsPlatform.instance.getUserAgent();
   }
 
   Event pageView({required Map<String, dynamic> labels}) {

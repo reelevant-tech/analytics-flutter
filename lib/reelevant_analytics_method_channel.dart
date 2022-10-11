@@ -10,15 +10,14 @@ class MethodChannelReelevantAnalytics extends ReelevantAnalyticsPlatform {
   final methodChannel = const MethodChannel('reelevant_analytics');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
   Future<String?> getUserAgent() async {
     final userAgent = await methodChannel.invokeMethod<String>('getUserAgent');
     return userAgent;
+  }
+
+  @override
+  Future<String?> getDeviceId() async {
+    final deviceId = await methodChannel.invokeMethod<String>('getDeviceId');
+    return deviceId;
   }
 }
