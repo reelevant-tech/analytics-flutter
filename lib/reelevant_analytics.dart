@@ -1,11 +1,10 @@
-library reelevant_analytics;
-
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'reelevant_analytics_platform_interface.dart';
 
 class Event {
   String name;
@@ -66,6 +65,10 @@ class ReelevantAnalytics {
     }
 
     setTmpId();
+  }
+
+  Future<String?> getPlatformVersion() {
+    return ReelevantAnalyticsPlatform.instance.getPlatformVersion();
   }
 
   setTmpId() async {
