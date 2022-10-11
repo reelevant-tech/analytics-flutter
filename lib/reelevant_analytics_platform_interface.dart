@@ -8,7 +8,8 @@ abstract class ReelevantAnalyticsPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static ReelevantAnalyticsPlatform _instance = MethodChannelReelevantAnalytics();
+  static ReelevantAnalyticsPlatform _instance =
+      MethodChannelReelevantAnalytics();
 
   /// The default instance of [ReelevantAnalyticsPlatform] to use.
   ///
@@ -25,5 +26,9 @@ abstract class ReelevantAnalyticsPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<String?> getUserAgent() {
+    throw UnimplementedError('getUserAgent() has not been implemented.');
   }
 }

@@ -9,6 +9,8 @@ class MockReelevantAnalyticsPlatform
     implements ReelevantAnalyticsPlatform {
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+  @override
+  Future<String?> getUserAgent() => Future.value('ios');
 }
 
 void main() {

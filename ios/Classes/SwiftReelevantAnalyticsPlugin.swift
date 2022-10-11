@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import WebKit
 
 public class SwiftReelevantAnalyticsPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -9,6 +10,13 @@ public class SwiftReelevantAnalyticsPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    switch call.method {
+      case "getPlatformVersion":
+        result("iOS " + UIDevice.current.systemVersion)
+      case "getUserAgent":
+        result(WKWebView().value(forKey: "userAgent") as? String ?? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36")
+      default:
+        result(FlutterMethodNotImplemented)
+    }
   }
 }

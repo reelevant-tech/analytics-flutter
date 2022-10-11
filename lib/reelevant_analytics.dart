@@ -53,7 +53,7 @@ class BuiltEvent {
 class ReelevantAnalytics {
   String companyId, datasourceId, endpoint;
   num retry;
-  String? currentUrl;
+  String? currentUrl, userAgent;
 
   ReelevantAnalytics(
       {required this.companyId,
@@ -64,18 +64,25 @@ class ReelevantAnalytics {
       endpoint = 'https://collector.reelevant.com/collect/$datasourceId/rlvt';
     }
 
-    setTmpId();
+    // Set tmpId
+    () async {
+      var prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('tmpId') == null) {
+        prefs.setString('tmpId', randomIdentifier());
+      }
+    }();
+    // Set user agent
+    () async {
+      userAgent = await getUserAgent();
+    }();
   }
 
   Future<String?> getPlatformVersion() {
     return ReelevantAnalyticsPlatform.instance.getPlatformVersion();
   }
 
-  setTmpId() async {
-    var prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('tmpId') == null) {
-      prefs.setString('tmpId', randomIdentifier());
-    }
+  Future<String?> getUserAgent() {
+    return ReelevantAnalyticsPlatform.instance.getUserAgent();
   }
 
   Event pageView({required Map<String, dynamic> labels}) {
@@ -170,8 +177,7 @@ class ReelevantAnalytics {
   sendRequest(BuiltEvent body) async {
     var headers = {
       'Content-Type': 'application/json',
-      'User-Agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
+      'User-Agent': userAgent ?? 'unknown'
     };
 
     try {

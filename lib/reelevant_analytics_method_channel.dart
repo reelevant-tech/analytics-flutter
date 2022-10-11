@@ -11,7 +11,14 @@ class MethodChannelReelevantAnalytics extends ReelevantAnalyticsPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
+  }
+
+  @override
+  Future<String?> getUserAgent() async {
+    final userAgent = await methodChannel.invokeMethod<String>('getUserAgent');
+    return userAgent;
   }
 }

@@ -57,8 +57,18 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+            child: Column(
+          children: [
+            Text('Running on: $_platformVersion\n'),
+            ElevatedButton(
+              onPressed: () {
+                var event = _reelevantAnalyticsPlugin.pageView(labels: {});
+                _reelevantAnalyticsPlugin.send(event);
+              },
+              child: const Text('Send event 📤'),
+            )
+          ],
+        )),
       ),
     );
   }
