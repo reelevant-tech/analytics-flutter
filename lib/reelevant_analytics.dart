@@ -22,8 +22,8 @@ class BuiltEvent {
   String? clientId;
   Map<String, dynamic> data;
   String eventId;
-  num v;
-  num timestamp;
+  int v;
+  int timestamp;
 
   BuiltEvent(
       {required this.key,
@@ -35,6 +35,17 @@ class BuiltEvent {
       required this.eventId,
       required this.v,
       required this.timestamp});
+
+  BuiltEvent.fromJson(Map<String, dynamic> json)
+      : key = json['key'],
+        name = json['name'],
+        url = json['url'],
+        tmpId = json['tmpId'],
+        clientId = json['clientId'],
+        data = json['data'],
+        eventId = json['eventId'],
+        v = json['v'],
+        timestamp = json['timestamp'];
 
   Map<String, dynamic> toJSON() {
     return {
@@ -53,7 +64,7 @@ class BuiltEvent {
 
 class ReelevantAnalytics {
   String companyId, datasourceId, endpoint;
-  num retry;
+  int retry;
   String? currentUrl, userAgent;
 
   ReelevantAnalytics(
@@ -65,17 +76,35 @@ class ReelevantAnalytics {
       endpoint = 'https://collector.reelevant.com/collect/$datasourceId/rlvt';
     }
 
-    // Set tmpId
     () async {
-      var prefs = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
+
+      // Set tmpId
       if (prefs.getString('tmpId') == null) {
         var deviceId = await ReelevantAnalyticsPlatform.instance.getDeviceId();
         prefs.setString('tmpId', deviceId ?? randomIdentifier());
       }
-    }();
-    // Set user agent
-    () async {
+
+      // Set user agent
       userAgent = await ReelevantAnalyticsPlatform.instance.getUserAgent();
+
+      // Fail queue
+      var queueStream = Stream.periodic(Duration(seconds: retry));
+      queueStream.forEach((_) {
+        var failedEvents = prefs.getStringList('failedEvents');
+        if (failedEvents != null && failedEvents.isNotEmpty) {
+          var removedEvent = failedEvents.removeAt(0);
+          prefs.setStringList('failedEvents', failedEvents);
+          var decodedRemovedEvent =
+              BuiltEvent.fromJson(json.decode(removedEvent));
+          var removedEventDate = DateTime.fromMillisecondsSinceEpoch(
+              decodedRemovedEvent.timestamp);
+          var difference = DateTime.now().difference(removedEventDate);
+          if (difference.inMinutes <= 15) {
+            sendRequest(decodedRemovedEvent);
+          }
+        }
+      });
     }();
   }
 
@@ -168,6 +197,13 @@ class ReelevantAnalytics {
         .join();
   }
 
+  _addToFailedEvents(BuiltEvent body) async {
+    final prefs = await SharedPreferences.getInstance();
+    var failedEvents = prefs.getStringList('faildEvents') ?? [];
+    failedEvents.add(jsonEncode(body.toJSON()));
+    prefs.setStringList('failedEvents', failedEvents);
+  }
+
   sendRequest(BuiltEvent body) async {
     var headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
@@ -179,9 +215,11 @@ class ReelevantAnalytics {
           headers: headers, body: jsonEncode(body.toJSON()));
       if (response.statusCode >= 500) {
         developer.log(response.toString());
+        throw Exception("Can't publish event.");
       }
     } catch (e) {
       developer.log(e.toString());
+      _addToFailedEvents(body);
     }
   }
 
