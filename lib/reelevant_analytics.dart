@@ -82,7 +82,7 @@ class ReelevantAnalytics {
       // Set tmpId
       if (prefs.getString('tmpId') == null) {
         var deviceId = await ReelevantAnalyticsPlatform.instance.getDeviceId();
-        prefs.setString('tmpId', deviceId ?? randomIdentifier());
+        prefs.setString('tmpId', deviceId ?? _randomIdentifier());
       }
 
       // Set user agent
@@ -101,12 +101,14 @@ class ReelevantAnalytics {
               decodedRemovedEvent.timestamp);
           var difference = DateTime.now().difference(removedEventDate);
           if (difference.inMinutes <= 15) {
-            sendRequest(decodedRemovedEvent);
+            _sendRequest(decodedRemovedEvent);
           }
         }
       });
     }();
   }
+
+  // Events
 
   Event pageView({required Map<String, dynamic> labels}) {
     return Event(name: 'page_view', labels: labels);
@@ -171,25 +173,49 @@ class ReelevantAnalytics {
     return Event(name: name, labels: labels);
   }
 
+  /// Sends the given event
+  ///
+  /// ### Example
+  ///
+  /// ```dart
+  /// var event = reelevantAnalytics.pageView(labels: {});
+  /// reelevantAnalytics.send(event);
+  /// ```
   send(Event event) async {
-    var builtEvent = await buildEventPayload(event.name, event.labels);
-    return sendRequest(builtEvent);
+    var builtEvent = await _buildEventPayload(event.name, event.labels);
+    return _sendRequest(builtEvent);
   }
 
+  /// Sets the user identifier and sends an identify event
+  ///
+  /// ### Example
+  ///
+  /// ```dart
+  /// reelevantAnalytics.setUser('user-id');
+  /// ```
   setUser(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString('userId') == null) {
       prefs.setString('userId', userId);
-      var builtEvent = await buildEventPayload('identify', {});
-      sendRequest(builtEvent);
+      var builtEvent = await _buildEventPayload('identify', {});
+      _sendRequest(builtEvent);
     }
   }
 
+  /// Sets the current url to identify where the user is when an event is sent
+  ///
+  /// ### Example
+  ///
+  /// ```dart
+  /// reelevantAnalytics.setCurrentURL('https://example.com');
+  /// ```
   setCurrentURL(String url) {
     currentUrl = url;
   }
 
-  String randomIdentifier() {
+  // Private methods
+
+  String _randomIdentifier() {
     var letters =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return List<String>.filled(25, '')
@@ -204,7 +230,7 @@ class ReelevantAnalytics {
     prefs.setStringList('failedEvents', failedEvents);
   }
 
-  sendRequest(BuiltEvent body) async {
+  _sendRequest(BuiltEvent body) async {
     var headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.userAgentHeader: userAgent ?? 'unknown'
@@ -223,7 +249,7 @@ class ReelevantAnalytics {
     }
   }
 
-  Future<BuiltEvent> buildEventPayload(
+  Future<BuiltEvent> _buildEventPayload(
       String name, Map<String, dynamic> payload) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -234,7 +260,7 @@ class ReelevantAnalytics {
         tmpId: prefs.getString('tmpId')!,
         clientId: prefs.getString('userId'),
         data: payload,
-        eventId: randomIdentifier(),
+        eventId: _randomIdentifier(),
         v: 1,
         timestamp: DateTime.now().millisecondsSinceEpoch);
     return event;
