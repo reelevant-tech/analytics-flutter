@@ -193,10 +193,10 @@ class ReelevantAnalytics {
   /// ```dart
   /// reelevantAnalytics.setUser('user-id');
   /// ```
-  setUser(String userId) async {
+  Future<void> setUser(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString('userId') == null) {
-      prefs.setString('userId', userId);
+      await prefs.setString('userId', userId);
       var builtEvent = await _buildEventPayload('identify', {});
       _sendRequest(builtEvent);
     }
