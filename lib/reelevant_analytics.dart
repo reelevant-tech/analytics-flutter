@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
@@ -59,7 +60,7 @@ class ReelevantAnalytics {
       {required this.companyId,
       required this.datasourceId,
       this.endpoint = '',
-      this.retry = 15}) {
+      this.retry = 60}) {
     if (endpoint == '') {
       endpoint = 'https://collector.reelevant.com/collect/$datasourceId/rlvt';
     }
@@ -169,8 +170,8 @@ class ReelevantAnalytics {
 
   sendRequest(BuiltEvent body) async {
     var headers = {
-      'Content-Type': 'application/json',
-      'User-Agent': userAgent ?? 'unknown'
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.userAgentHeader: userAgent ?? 'unknown'
     };
 
     try {
