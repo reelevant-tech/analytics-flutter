@@ -15,8 +15,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _reelevantAnalyticsPlugin = ReelevantAnalytics(
-      companyId: '57a32a503ac78e0f003e6713',
-      datasourceId: '63442674385b000300a4d532');
+      companyId: '', // Ask your customer success team
+      datasourceId: ''); // Ask your customer success team
 
   @override
   void initState() {
@@ -28,12 +28,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Reelevant analytics example app'),
         ),
         body: Center(
             child: Column(
           children: [
-            const Text('Holà !'),
+            const Text(
+                'Try to send a page_view event by clicking on the button'),
             ElevatedButton(
               onPressed: () {
                 var event = _reelevantAnalyticsPlugin.pageView(labels: {});
