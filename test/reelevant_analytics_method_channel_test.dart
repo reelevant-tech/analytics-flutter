@@ -30,6 +30,6 @@ void main() {
   });
 
   test('getDeviceId', () async {
-    expect(await platform.getUserAgent(), '42');
+    expect(await platform.getDeviceId(), '42');
   });
 }

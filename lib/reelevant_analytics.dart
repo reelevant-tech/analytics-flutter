@@ -66,6 +66,7 @@ class ReelevantAnalytics {
   String companyId, datasourceId, endpoint;
   int retry;
   String? currentUrl, userAgent;
+  http.Client client = http.Client();
 
   ReelevantAnalytics(
       {required this.companyId,
@@ -90,11 +91,11 @@ class ReelevantAnalytics {
 
       // Fail queue
       var queueStream = Stream.periodic(Duration(seconds: retry));
-      queueStream.forEach((_) {
-        var failedEvents = prefs.getStringList('failedEvents');
-        if (failedEvents != null && failedEvents.isNotEmpty) {
+      queueStream.forEach((_) async {
+        var failedEvents = await _getFailedEvents();
+        if (failedEvents.isNotEmpty) {
           var removedEvent = failedEvents.removeAt(0);
-          prefs.setStringList('failedEvents', failedEvents);
+          await prefs.setStringList('failedEvents', failedEvents);
           var decodedRemovedEvent =
               BuiltEvent.fromJson(json.decode(removedEvent));
           var removedEventDate = DateTime.fromMillisecondsSinceEpoch(
@@ -181,7 +182,7 @@ class ReelevantAnalytics {
   /// var event = reelevantAnalytics.pageView(labels: {});
   /// reelevantAnalytics.send(event);
   /// ```
-  send(Event event) async {
+  Future<void> send(Event event) async {
     var builtEvent = await _buildEventPayload(event.name, event.labels);
     return _sendRequest(builtEvent);
   }
@@ -198,7 +199,7 @@ class ReelevantAnalytics {
     if (prefs.getString('userId') == null) {
       await prefs.setString('userId', userId);
       var builtEvent = await _buildEventPayload('identify', {});
-      _sendRequest(builtEvent);
+      await _sendRequest(builtEvent);
     }
   }
 
@@ -209,7 +210,7 @@ class ReelevantAnalytics {
   /// ```dart
   /// reelevantAnalytics.setCurrentURL('https://example.com');
   /// ```
-  setCurrentURL(String url) {
+  void setCurrentURL(String url) {
     currentUrl = url;
   }
 
@@ -223,21 +224,27 @@ class ReelevantAnalytics {
         .join();
   }
 
-  _addToFailedEvents(BuiltEvent body) async {
+  Future<void> _addToFailedEvents(BuiltEvent body) async {
     final prefs = await SharedPreferences.getInstance();
     var failedEvents = prefs.getStringList('faildEvents') ?? [];
     failedEvents.add(jsonEncode(body.toJSON()));
-    prefs.setStringList('failedEvents', failedEvents);
+    await prefs.setStringList('failedEvents', failedEvents);
   }
 
-  _sendRequest(BuiltEvent body) async {
+  Future<List<String>> _getFailedEvents() async {
+    final prefs = await SharedPreferences.getInstance();
+    var failedEvents = prefs.getStringList('failedEvents') ?? [];
+    return failedEvents;
+  }
+
+  Future<void> _sendRequest(BuiltEvent body) async {
     var headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.userAgentHeader: userAgent ?? 'unknown'
     };
 
     try {
-      var response = await http.post(Uri.parse(endpoint),
+      var response = await client.post(Uri.parse(endpoint),
           headers: headers, body: jsonEncode(body.toJSON()));
       if (response.statusCode >= 500) {
         developer.log(response.toString());
