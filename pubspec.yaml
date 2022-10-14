@@ -1,5 +1,5 @@
 name: reelevant_analytics
-description: A new Flutter plugin project.
+description: This Flutter package could be used to send tracking events to Reelevant datasources.
 version: 0.0.1
 homepage:
 
