@@ -195,7 +195,8 @@ class ReelevantAnalytics {
   /// ```
   Future<void> setUser(String userId) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('userId') == null) {
+    var storedUserId = prefs.getString('userId');
+    if (storedUserId == null || storedUserId != userId) {
       await prefs.setString('userId', userId);
       var builtEvent = await _buildEventPayload('identify', {});
       await _sendRequest(builtEvent);
