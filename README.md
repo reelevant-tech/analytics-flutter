@@ -1,3 +1,7 @@
+[![Tests](https://github.com/reelevant-tech/analytics-flutter/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/reelevant-tech/analytics-flutter/actions/workflows/tests.yml)
+![iOS](https://img.shields.io/badge/Platform-iOS-blueviolet)
+![Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+
 # Reelevant Analytics SDK for flutter (iOS and Android)
 
 This Flutter package could be used to send tracking events to Reelevant datasources.
