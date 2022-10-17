@@ -111,12 +111,12 @@ class ReelevantAnalytics {
 
   // Events
 
-  Event pageView({required Map<String, dynamic> labels}) {
+  Event pageView({required Map<String, String> labels}) {
     return Event(name: 'page_view', labels: labels);
   }
 
   Event addCart(
-      {required List<String> ids, required Map<String, dynamic> labels}) {
+      {required List<String> ids, required Map<String, String> labels}) {
     var mergedLabels = {'ids': ids, ...labels};
     return Event(name: 'add_cart', labels: mergedLabels);
   }
@@ -124,7 +124,7 @@ class ReelevantAnalytics {
   Event purchase(
       {required List<String> ids,
       required num totalAmount,
-      required Map<String, dynamic> labels,
+      required Map<String, String> labels,
       required String transId}) {
     var mergedLabels = {
       'ids': ids,
@@ -135,8 +135,7 @@ class ReelevantAnalytics {
     return Event(name: 'purchase', labels: mergedLabels);
   }
 
-  Event productPage(
-      {required String id, required Map<String, dynamic> labels}) {
+  Event productPage({required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
       ...labels
@@ -145,7 +144,7 @@ class ReelevantAnalytics {
   }
 
   Event categoryView(
-      {required String id, required Map<String, dynamic> labels}) {
+      {required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
       ...labels
@@ -153,7 +152,7 @@ class ReelevantAnalytics {
     return Event(name: 'category_view', labels: mergedLabels);
   }
 
-  Event brandView({required String id, required Map<String, dynamic> labels}) {
+  Event brandView({required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
       ...labels
@@ -162,7 +161,7 @@ class ReelevantAnalytics {
   }
 
   Event productHover(
-      {required String id, required Map<String, dynamic> labels}) {
+      {required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
       ...labels
@@ -170,7 +169,7 @@ class ReelevantAnalytics {
     return Event(name: 'product_hover', labels: mergedLabels);
   }
 
-  Event custom({required String name, required Map<String, dynamic> labels}) {
+  Event custom({required String name, required Map<String, String> labels}) {
     return Event(name: name, labels: labels);
   }
 
