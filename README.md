@@ -1,10 +1,24 @@
 [![Tests](https://github.com/reelevant-tech/analytics-flutter/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/reelevant-tech/analytics-flutter/actions/workflows/tests.yml)
 ![iOS](https://img.shields.io/badge/Platform-iOS-blueviolet)
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+[![Pub Version](https://img.shields.io/pub/v/reelevant_analytics)](https://pub.dev/packages/reelevant_analytics)
+[![Pub Likes](https://img.shields.io/pub/likes/reelevant_analytics)](https://pub.dev/packages/reelevant_analytics/score)
+[![Pub Points](https://img.shields.io/pub/points/reelevant_analytics)](https://pub.dev/packages/reelevant_analytics/score)
+[![Pub Popularity](https://img.shields.io/pub/popularity/reelevant_analytics)](https://pub.dev/packages/reelevant_analytics/score)
+[![Pub Publisher](https://img.shields.io/pub/publisher/reelevant_analytics)](https://pub.dev/publishers/reelevant.com/packages)
 
 # Reelevant Analytics SDK for flutter (iOS and Android)
 
 This Flutter package could be used to send tracking events to Reelevant datasources.
+
+## Install
+
+Run this command:
+
+```
+flutter pub add reelevant_analytics
+```
+See [pub.dev](https://pub.dev/packages/reelevant_analytics/install) for more informations.
 
 ## How to use
 
