@@ -14,6 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // Declare reelevant analytics sdk instance with company id and datasource id.
   final _reelevantAnalyticsPlugin = ReelevantAnalytics(
       companyId: '', // Ask your customer success team
       datasourceId: ''); // Ask your customer success team
@@ -37,7 +38,9 @@ class _MyAppState extends State<MyApp> {
                 'Try to send a page_view event by clicking on the button'),
             ElevatedButton(
               onPressed: () {
+                // Create a `page_view` event.
                 var event = _reelevantAnalyticsPlugin.pageView(labels: {});
+                // Send event to Reelevant events datasource.
                 _reelevantAnalyticsPlugin.send(event);
               },
               child: const Text('Send event 📤'),
