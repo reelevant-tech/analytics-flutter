@@ -24,10 +24,14 @@ abstract class ReelevantAnalyticsPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Invoke native code to return the device user agent.
+  /// Throw an error if getUserAgent is not implemented for a platform.
   Future<String?> getUserAgent() {
     throw UnimplementedError('getUserAgent() has not been implemented.');
   }
 
+  /// Invoke native code to return a device id for iOS and an unique identifer for Android.
+  /// Throw an error if getDeviceId is not implemented for a platform.
   Future<String?> getDeviceId() {
     throw UnimplementedError('getDeviceId() has not been implemented.');
   }

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'reelevant_analytics_platform_interface.dart';
 
+/// Event define an analytics events compatible with Reelevant Events datsources.
 class Event {
   String name;
   Map<String, dynamic> labels;
@@ -14,6 +15,7 @@ class Event {
   Event({required this.name, required this.labels});
 }
 
+/// BuiltEvent define the structure of an event sent to Reelevant datasources API.
 class BuiltEvent {
   String key;
   String name;
@@ -36,6 +38,7 @@ class BuiltEvent {
       required this.v,
       required this.timestamp});
 
+  /// Convert from JSON to BuiltEvent
   BuiltEvent.fromJson(Map<String, dynamic> json)
       : key = json['key'],
         name = json['name'],
@@ -47,6 +50,7 @@ class BuiltEvent {
         v = json['v'],
         timestamp = json['timestamp'];
 
+  /// Convert from BuiltEvent to JSON
   Map<String, dynamic> toJSON() {
     return {
       'key': key,
@@ -62,6 +66,15 @@ class BuiltEvent {
   }
 }
 
+/// Reelevant analytics sdk instance, used to create and send analytics events to Reelevant datasources.
+///
+/// ### Example
+///
+/// ```dart
+/// final reelevantAnalytics = ReelevantAnalytics(companyId: '<company id>', datasourceId: '<datasource id>');
+/// var event = reelevantAnalytics.pageView(labels: {});
+/// reelevantAnalytics.send(event);
+/// ```
 class ReelevantAnalytics {
   String companyId, datasourceId, endpoint;
   int retry;
@@ -111,16 +124,19 @@ class ReelevantAnalytics {
 
   // Events
 
+  /// Return a `page_view` event.
   Event pageView({required Map<String, String> labels}) {
     return Event(name: 'page_view', labels: labels);
   }
 
+  /// Return a `add_cart` event.
   Event addCart(
       {required List<String> ids, required Map<String, String> labels}) {
     var mergedLabels = {'ids': ids, ...labels};
     return Event(name: 'add_cart', labels: mergedLabels);
   }
 
+  /// Return a `purchase` event.
   Event purchase(
       {required List<String> ids,
       required num totalAmount,
@@ -135,6 +151,7 @@ class ReelevantAnalytics {
     return Event(name: 'purchase', labels: mergedLabels);
   }
 
+  /// Return a `product_page` event.
   Event productPage({required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
@@ -143,6 +160,7 @@ class ReelevantAnalytics {
     return Event(name: 'product_page', labels: mergedLabels);
   }
 
+  /// Return a `category_view` event.
   Event categoryView(
       {required String id, required Map<String, String> labels}) {
     var mergedLabels = {
@@ -152,6 +170,7 @@ class ReelevantAnalytics {
     return Event(name: 'category_view', labels: mergedLabels);
   }
 
+  /// Return a `brand_view` event.
   Event brandView({required String id, required Map<String, String> labels}) {
     var mergedLabels = {
       'ids': [id],
@@ -160,6 +179,7 @@ class ReelevantAnalytics {
     return Event(name: 'brand_view', labels: mergedLabels);
   }
 
+  /// Return a `product_hover` event.
   Event productHover(
       {required String id, required Map<String, String> labels}) {
     var mergedLabels = {
@@ -169,11 +189,12 @@ class ReelevantAnalytics {
     return Event(name: 'product_hover', labels: mergedLabels);
   }
 
+  /// Return a `<name>` event.
   Event custom({required String name, required Map<String, String> labels}) {
     return Event(name: name, labels: labels);
   }
 
-  /// Sends the given event
+  /// Sends the given event.
   ///
   /// ### Example
   ///
@@ -186,7 +207,7 @@ class ReelevantAnalytics {
     return _sendRequest(builtEvent);
   }
 
-  /// Sets the user identifier and sends an identify event
+  /// Sets the user identifier and sends an identify event.
   ///
   /// ### Example
   ///
@@ -203,7 +224,7 @@ class ReelevantAnalytics {
     }
   }
 
-  /// Sets the current url to identify where the user is when an event is sent
+  /// Sets the current url to identify where the user is when an event is sent.
   ///
   /// ### Example
   ///
@@ -216,6 +237,7 @@ class ReelevantAnalytics {
 
   // Private methods
 
+  /// Generate a random identifier.
   String _randomIdentifier() {
     var letters =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -224,6 +246,7 @@ class ReelevantAnalytics {
         .join();
   }
 
+  /// Store failed events to retrieve it on next app launch.
   Future<void> _addToFailedEvents(BuiltEvent body) async {
     final prefs = await SharedPreferences.getInstance();
     var failedEvents = prefs.getStringList('faildEvents') ?? [];
@@ -231,12 +254,14 @@ class ReelevantAnalytics {
     await prefs.setStringList('failedEvents', failedEvents);
   }
 
+  /// Retrieve failed events from storage.
   Future<List<String>> _getFailedEvents() async {
     final prefs = await SharedPreferences.getInstance();
     var failedEvents = prefs.getStringList('failedEvents') ?? [];
     return failedEvents;
   }
 
+  /// Send http request with event payload to `this.endpoint`.
   Future<void> _sendRequest(BuiltEvent body) async {
     var headers = {
       HttpHeaders.contentTypeHeader: 'application/json',
@@ -256,6 +281,7 @@ class ReelevantAnalytics {
     }
   }
 
+  /// Create event payload from event generated by events functions.
   Future<BuiltEvent> _buildEventPayload(
       String name, Map<String, dynamic> payload) async {
     final prefs = await SharedPreferences.getInstance();
